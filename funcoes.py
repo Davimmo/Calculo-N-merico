@@ -91,5 +91,3 @@ def secante(func, x0, x1, eps, rmax): #func = string funcao / x0 e x1 = estimati
         rmax-=1
     print(f'x{iter+1} = {b:.6f} | f(x{iter+1}) = {fxm:.6f} | {iter} iterações!')
     return b
-
-bissec("x^3-x-1",1,2,0.0002,20)
