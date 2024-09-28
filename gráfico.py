@@ -27,3 +27,6 @@ plt.savefig('grafico_funcao_x3_menos_x_menos_1.png')
 
 # Mostrar o gráfico
 plt.show()
+
+
+teste
