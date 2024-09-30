@@ -14,13 +14,13 @@ def bissec(func, xe, xd, eps, rmax): #func = string funcao / xe e xd = [a,b] ini
         while(abs(fxm) > eps and iter < rmax):
             xm = (a+b)/2
             fxm= fx(xm)
-            print(f'[ {a:.6f} , {b:.6f} ] | xm = {xm:.6f} | f(xm) = {fxm:.6f} | diferença de f(x) e epsilon = {fxm-eps:.6f}')
+            print(f'[ {a:.6f} , {b:.6f} ] | xm = {xm:.6f} | f(xm) = {fxm:.6f} | diferença de f(x) e epsilon = {abs(fxm)-eps:.6f}')
             if( ( fx(a)*fxm ) < 0):
                 b=xm
             else:
                 a=xm
             iter+=1
-        print(f'\nx = {xm:.9f} | f(x) = {fxm:.9f} | {iter} iterações! | erro: {fxm-eps:.9f}')
+        print(f'\nx = {xm:.9f} | f(x) = {fxm:.9f} | {iter} iterações! | erro: {abs(fxm)-eps:.9f}')
         return xm
     return
 
@@ -42,13 +42,13 @@ def fp(func, xe, xd, eps, rmax): #func = string funcao / xe e xd = [a,b] inicial
             fb = fx(b)
             xm = ( (a*fb-b*fa)/(fb-fa) )
             fxm= fx(xm)
-            print(f'[ {a:.6f} , {b:.6f} ] | xm = {xm:.6f} | f(xm) = {fxm:.6f} | diferença de f(x) e epsilon = {fxm-eps:.6f}')
+            print(f'[ {a:.6f} , {b:.6f} ] | xm = {xm:.6f} | f(xm) = {fxm:.6f} | diferença de f(x) e epsilon = {abs(fxm)-eps:.6f}')
             if( ( fx(a)*fxm ) < 0):
                 b=xm
             else:
                 a=xm
             iter+=1
-        print(f'\nx = {xm:.9f} | f(x) = {fxm:.9f} | {iter} iterações! | erro: {fxm-eps:.9f}')
+        print(f'\nx = {xm:.9f} | f(x) = {fxm:.9f} | {iter} iterações! | erro: {abs(fxm)-eps:.9f}')
         return xm
     return
 
@@ -64,10 +64,10 @@ def newton(func, xe, eps, rmax): #func = string funcao / xe = x estimado / eps =
     while(abs(fxn) > eps and iter < rmax):
         xn = x0-( fx(x0)/dfx(x0) )
         fxn = fx(xn)
-        print(f'x{iter} = {x0:.6f} | x{iter+1} = {xn:.6f} | f(x{iter+1}) = {fxn:.6f} | diferença de f(x{iter+1}) e epsilon = {fxn-eps:.6f}')
+        print(f'x{iter} = {x0:.6f} | x{iter+1} = {xn:.6f} | f(x{iter+1}) = {fxn:.6f} | diferença de f(x{iter+1}) e epsilon = {abs(fxn)-eps:.6f}')
         x0 = xn
         iter+=1
-    print(f'\nx{iter} = {xn:.9f} | f(x{iter}) = {fxn:.9f} | {iter} iterações! | erro: {fxn-eps:.9f}')
+    print(f'\nx{iter} = {xn:.9f} | f(x{iter}) = {fxn:.9f} | {iter} iterações! | erro: {abs(fxn)-eps:.9f}')
     return xn
 
 def secante(func, x0, x1, eps, rmax): #func = string funcao / x0 e x1 = estimativas iniciais / eps = epsilon / rmax = maximo de repeticoes
@@ -87,9 +87,22 @@ def secante(func, x0, x1, eps, rmax): #func = string funcao / x0 e x1 = estimati
         fxb = fx(b)
         xm = ( (a*fxb-b*fxa)/(fxb-fxa) )
         fxm = fx(xm)
-        print(f'x{iter} = {a:.6f} | x{iter+1} = {b:.6f} | x{iter+2} = {xm:.6f} | f(x{iter+2}) = {fxm:.6f} | diferença de f(x{iter+2}) e epsilon = {fxm-eps:.6f}')
+        print(f'x{iter} = {a:.6f} | x{iter+1} = {b:.6f} | x{iter+2} = {xm:.6f} | f(x{iter+2}) = {fxm:.6f} | diferença de f(x{iter+2}) e epsilon = {abs(fxm)-eps:.6f}')
         a = b
         b = xm
         iter+=1
-    print(f'x{iter+1} = {xm:.9f} | f(x{iter+1}) = {fxm:.9f} | {iter} iterações! | erro: {fxm-eps:.9f}')
+    print(f'x{iter+1} = {xm:.9f} | f(x{iter+1}) = {fxm:.9f} | {iter} iterações! | erro: {abs(fxm)-eps:.9f}')
     return xm
+
+
+print("\n")
+bissec("x^3+3*x^2+12*x+8", -5, 5, 0.0001, 20)
+print("\n")
+print("\n")
+fp("x^3+3*x^2+12*x+8", -5, 5, 0.0001, 20)
+print("\n")
+print("\n")
+newton("x^3+3*x^2+12*x+8", -5, 0.0001, 20)
+print("\n")
+print("\n")
+secante("x^3+3*x^2+12*x+8", -5, 5, 0.0001, 20)

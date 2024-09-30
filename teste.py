@@ -50,14 +50,14 @@ def mostrar_resultados(func_str, resultados, metodo):
     table_frame = tk.Frame(resultado_janela)
     table_frame.pack(pady=10)
 
-    columns = ["Iteração", "x", "f(x)", "Diferença", "Erro"]
+    columns = ["Iteração", "x", "f(x)", "Diferença"]
     tree = ttk.Treeview(table_frame, columns=columns, show="headings")
     
     for col in columns:
         tree.heading(col, text=col)
 
-    for i, (x_val, f_val, diff_val, erro_val) in enumerate(resultados):
-        tree.insert("", "end", values=(i + 1, x_val, f_val, diff_val, erro_val))
+    for i, (x_val, f_val, diff_val) in enumerate(resultados):
+        tree.insert("", "end", values=(i + 1, x_val, f_val, diff_val))
 
     tree.pack(side=tk.LEFT, fill=tk.BOTH)
     scroll = ttk.Scrollbar(table_frame, orient="vertical", command=tree.yview)
@@ -117,14 +117,14 @@ def bissec(func, xe, xd, eps, rmax):
     while abs(fxm) > eps and iter < rmax:
         xm = (a + b) / 2
         fxm = fx(xm)
-        diff = abs(b - a) / 2
-        resultados.append((xm, fxm, diff, abs(fxm)))
+        diff = abs(fxm) - eps
+        resultados.append((xm, fxm, diff))
         if fx(a) * fxm < 0:
             b = xm
         else:
             a = xm
         iter += 1
-    resultados.append((xm, fxm, None, abs(fxm)))
+    resultados.append((xm, fxm, diff))
     return resultados
 
 def fp(func, xe, xd, eps, rmax):
@@ -141,8 +141,8 @@ def fp(func, xe, xd, eps, rmax):
     while abs(fb - fa) > eps and iter < rmax:
         xm = (a * fb - b * fa) / (fb - fa)
         fxm = fx(xm)
-        diff = abs(fxm)
-        resultados.append((xm, fxm, abs(b - a), diff))
+        diff = abs(fxm) - eps
+        resultados.append((xm, fxm, diff))
         if fx(a) * fxm < 0:
             b = xm
         else:
@@ -150,7 +150,7 @@ def fp(func, xe, xd, eps, rmax):
         fa = fx(a)
         fb = fx(b)
         iter += 1
-    resultados.append((xm, fxm, None, abs(fxm)))
+    resultados.append((xm, fxm, diff))
     return resultados
 
 def newton(func, xe, eps, rmax):
@@ -168,11 +168,11 @@ def newton(func, xe, eps, rmax):
         if abs(fxn) < eps or iter >= rmax:
             break
         x1 = x0 - fxn / dfxn
-        diff = abs(x1 - x0)
-        resultados.append((x0, fxn, diff, abs(fxn)))
+        diff = abs(fxn) - eps
+        resultados.append((x0, fxn, diff))
         x0 = x1
         iter += 1
-    resultados.append((x0, fx(x0), None, abs(fx(x0))))
+    resultados.append((x0, fx(x0), diff))
     return resultados
 
 def secante(func, x0, x1, eps, rmax):
@@ -188,11 +188,11 @@ def secante(func, x0, x1, eps, rmax):
         if abs(fxb) < eps or iter >= rmax:
             break
         xm = x1 - fxb * (x1 - x0) / (fxb - fxa)
-        diff = abs(xm - x1)
-        resultados.append((x1, fxb, diff, abs(fxb)))
+        diff = abs(fx(xm)) - eps
+        resultados.append((x1, fxb, diff))
         x0, x1 = x1, xm
         iter += 1
-    resultados.append((x1, fx(x1), None, abs(fx(x1))))
+    resultados.append((x1, fx(x1), diff))
     return resultados
 
 class App(tk.Tk):
