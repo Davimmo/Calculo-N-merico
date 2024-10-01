@@ -51,7 +51,7 @@ def mostrar_resultados(func_str, resultados, metodo):
     table_frame.pack(pady=10)
 
     if metodo == "Bisseção" or metodo == "Falsa Posição":
-        columns = ["Iteração", "xi", "xf", "x", "f(x)", "Diferença"]
+        columns = ["Iteração", "a", "b", "x", "f(x)", "Diferença"]
         tree = ttk.Treeview(table_frame, columns=columns, show="headings")
         
         for col in columns:
@@ -65,7 +65,7 @@ def mostrar_resultados(func_str, resultados, metodo):
                 tree.insert("", "end", values=(i + 1, f"{a:.6f}", f"{b:.6f}", f"{xm:.6f}", f"{fxm:.6f}", f"{diff_val:.6f}"))
 
     elif metodo == "Newton":
-        columns = ["Iteração", "xi", "x", "f(x)", "Diferença"]
+        columns = ["Iteração", "x(k)", "x(k+1)", "f(x)", "Diferença"]
         tree = ttk.Treeview(table_frame, columns=columns, show="headings")
         
         for col in columns:
@@ -79,7 +79,7 @@ def mostrar_resultados(func_str, resultados, metodo):
                 tree.insert("", "end", values=(i + 1, f"{x0:.6f}", f"{x1:.6f}", f"{fxm:.6f}", f"{diff_val:.6f}"))
 
     elif metodo == "Secantes":
-        columns = ["Iteração", "x0", "x1", "x2", "f(x)", "Diferença"]
+        columns = ["Iteração", "x(k-1)", "x(k)", "x(k+1)", "f(x)", "Diferença"]
         tree = ttk.Treeview(table_frame, columns=columns, show="headings")
         
         for col in columns:
