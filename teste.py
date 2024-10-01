@@ -59,7 +59,10 @@ def mostrar_resultados(func_str, resultados, metodo):
             tree.column(col, width=100, anchor='center')
 
         for i, (a, b, xm, fxm, diff_val) in enumerate(resultados):
-            tree.insert("", "end", values=(i + 1, f"{a:.6f}", f"{b:.6f}", f"{xm:.6f}", f"{fxm:.6f}", f"{diff_val:.6f}"))
+            if i == len(resultados) - 1:  # Se for o último elemento
+                tree.insert("", "end", values=("resultado", f"{a:.6f}", f"{b:.6f}", f"{xm:.6f}", f"{fxm:.6f}", f"{diff_val:.6f}"))
+            else:
+                tree.insert("", "end", values=(i + 1, f"{a:.6f}", f"{b:.6f}", f"{xm:.6f}", f"{fxm:.6f}", f"{diff_val:.6f}"))
 
     elif metodo == "Newton":
         columns = ["Iteração", "xi", "x", "f(x)", "Diferença"]
@@ -70,7 +73,10 @@ def mostrar_resultados(func_str, resultados, metodo):
             tree.column(col, width=100, anchor='center')
 
         for i, (x0, x1, fxm, diff_val) in enumerate(resultados):
-            tree.insert("", "end", values=(i + 1, f"{x0:.6f}", f"{x1:.6f}", f"{fxm:.6f}", f"{diff_val:.6f}"))
+            if i == len(resultados) - 1:  # Se for o último elemento
+                tree.insert("", "end", values=("resultado", f"{x0:.6f}", f"{x1:.6f}", f"{fxm:.6f}", f"{diff_val:.6f}"))
+            else:
+                tree.insert("", "end", values=(i + 1, f"{x0:.6f}", f"{x1:.6f}", f"{fxm:.6f}", f"{diff_val:.6f}"))
 
     elif metodo == "Secantes":
         columns = ["Iteração", "x0", "x1", "x2", "f(x)", "Diferença"]
@@ -81,7 +87,11 @@ def mostrar_resultados(func_str, resultados, metodo):
             tree.column(col, width=100, anchor='center')
 
         for i, (x0, x1, xm, fxm, diff_val) in enumerate(resultados):
-            tree.insert("", "end", values=(i + 1, f"{x0:.6f}", f"{x1:.6f}", f"{xm:.6f}", f"{fxm:.6f}", f"{diff_val:.6f}"))
+            if i == len(resultados) - 1:  # Se for o último elemento
+                tree.insert("", "end", values=("resultado", f"{x0:.6f}", f"{x1:.6f}", f"{xm:.6f}", f"{fxm:.6f}", f"{diff_val:.6f}"))
+            else:
+                tree.insert("", "end", values=(i + 1, f"{x0:.6f}", f"{x1:.6f}", f"{xm:.6f}", f"{fxm:.6f}", f"{diff_val:.6f}"))
+
 
     tree.pack(side=tk.LEFT, fill=tk.BOTH)
     scroll = ttk.Scrollbar(table_frame, orient="vertical", command=tree.yview)
@@ -139,7 +149,7 @@ def bissec(func, xe, xd, eps, rmax):
     iter = 0
     resultados = []
     
-    while abs(fxm) > eps and iter < rmax:
+    while (abs(fxm) > eps and iter < rmax):
         xm = (a + b) / 2
         fxm = fx(xm)
         diff = abs(fxm) - eps
@@ -163,8 +173,9 @@ def fp(func, xe, xd, eps, rmax):
     fb = fx(b)
     iter = 0
     resultados = []
-
-    while abs(fb - fa) > eps and iter < rmax:
+    xm = ( (a*fb-b*fa)/(fb-fa) )
+    fxm= fx(xm)
+    while (abs(fxm) > eps and iter < rmax):
         xm = (a * fb - b * fa) / (fb - fa)
         fxm = fx(xm)
         diff = abs(fxm) - eps
@@ -187,8 +198,9 @@ def newton(func, xe, eps, rmax):
     x0 = xe
     iter = 0
     resultados = []
-    
-    while True:
+    xn = x0-( fx(x0)/dfx(x0) )
+    fxn = fx(xn)
+    while (abs(fxn) > eps and iter < rmax):
         fxn = fx(x0)
         dfxn = dfx(x0)
         if abs(fxn) < eps or iter >= rmax:
@@ -205,10 +217,15 @@ def secante(func, x0, x1, eps, rmax):
     x = sp.symbols('x')
     func_py = sp.sympify(func)
     fx = sp.lambdify(x, func_py)
+    a = x0
+    b = x1
+    fxa = fx(a)
+    fxb = fx(b)
+    xm = x1 - fxb * (x1 - x0) / (fxb - fxa)
+    fxm = fx(xm)
     iter = 0
     resultados = []
-    
-    while True:
+    while (abs(fxm) > eps and iter < rmax):
         fxa = fx(x0)
         fxb = fx(x1)
         if abs(fxb) < eps or iter >= rmax:
@@ -229,42 +246,49 @@ class App(tk.Tk):
         self.state('zoomed')
         self.config(bg='lightblue')
 
+        # Espaçamento vertical (pady) adicionado para cada elemento
         self.label_func = tk.Label(self, text="Função:")
-        self.label_func.pack()
+        self.label_func.pack(pady=(10, 0))  # Espaço superior de 10 pixels
+
         self.entry_func = tk.Entry(self)
-        self.entry_func.pack()
+        self.entry_func.pack(pady=(0, 10))  # Espaço inferior de 10 pixels
 
-        self.label_xe = tk.Label(self, text="x Esquerda (ou x0):")
-        self.label_xe.pack()
+        self.label_xe = tk.Label(self, text="X inicial (ou X(k-1)):")
+        self.label_xe.pack(pady=(10, 0))
+
         self.entry_xe = tk.Entry(self)
-        self.entry_xe.pack()
+        self.entry_xe.pack(pady=(0, 10))
 
-        self.label_xd = tk.Label(self, text="x Direita (ou x1):")
-        self.label_xd.pack()
+        self.label_xd = tk.Label(self, text="X final (ou X(K)):")
+        self.label_xd.pack(pady=(10, 0))
+
         self.entry_xd = tk.Entry(self)
-        self.entry_xd.pack()
+        self.entry_xd.pack(pady=(0, 10))
 
         self.label_eps = tk.Label(self, text="Precisão (epsilon):")
-        self.label_eps.pack()
+        self.label_eps.pack(pady=(10, 0))
+
         self.entry_eps = tk.Entry(self)
-        self.entry_eps.pack()
+        self.entry_eps.pack(pady=(0, 10))
 
         self.label_rmax = tk.Label(self, text="Iterações Máximas:")
-        self.label_rmax.pack()
-        self.entry_rmax = tk.Entry(self)
-        self.entry_rmax.pack()
+        self.label_rmax.pack(pady=(10, 0))
 
+        self.entry_rmax = tk.Entry(self)
+        self.entry_rmax.pack(pady=(0, 10))
+
+        # Botões com espaçamento adicional
         self.button_bissecao = tk.Button(self, text="Bisseção", command=lambda: executar_bissecao(self))
-        self.button_bissecao.pack()
+        self.button_bissecao.pack(pady=(20, 5))
 
         self.button_fp = tk.Button(self, text="Falsa Posição", command=lambda: executar_falsa_posicao(self))
-        self.button_fp.pack()
+        self.button_fp.pack(pady=(5, 5))
 
         self.button_newton = tk.Button(self, text="Newton", command=lambda: executar_newton(self))
-        self.button_newton.pack()
+        self.button_newton.pack(pady=(5, 5))
 
         self.button_secante = tk.Button(self, text="Secantes", command=lambda: executar_secantes(self))
-        self.button_secante.pack()
+        self.button_secante.pack(pady=(5, 20))
 
 if __name__ == "__main__":
     app = App()
