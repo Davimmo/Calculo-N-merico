@@ -46,43 +46,48 @@ def mostrar_resultados(func_str, resultados, metodo):
     canvas = FigureCanvasTkAgg(fig, master=resultado_janela)
     canvas.draw()
     canvas.get_tk_widget().pack()
+
     table_frame = tk.Frame(resultado_janela)
     table_frame.pack(pady=10)
 
-    if(metodo == "Bisseção" or metodo == "Falsa Posição"):
+    if metodo == "Bisseção" or metodo == "Falsa Posição":
         columns = ["Iteração", "xi", "xf", "x", "f(x)", "Diferença"]
         tree = ttk.Treeview(table_frame, columns=columns, show="headings")
         
         for col in columns:
             tree.heading(col, text=col)
+            tree.column(col, width=100, anchor='center')
 
-        for i, (xi, xf, x_val, f_val, diff_val) in enumerate(resultados):
-            tree.insert("", "end", values=(i + 1,xi, xf, x_val, f_val, diff_val))
-    
-    if(metodo == "Newton" ):
+        for i, (a, b, xm, fxm, diff_val) in enumerate(resultados):
+            tree.insert("", "end", values=(i + 1, f"{a:.6f}", f"{b:.6f}", f"{xm:.6f}", f"{fxm:.6f}", f"{diff_val:.6f}"))
+
+    elif metodo == "Newton":
         columns = ["Iteração", "xi", "x", "f(x)", "Diferença"]
         tree = ttk.Treeview(table_frame, columns=columns, show="headings")
         
         for col in columns:
             tree.heading(col, text=col)
+            tree.column(col, width=100, anchor='center')
 
-        for i, (x, x_val, f_val, diff_val) in enumerate(resultados):
-            tree.insert("", "end", values=(i + 1, x, x_val, f_val, diff_val))
+        for i, (x0, x1, fxm, diff_val) in enumerate(resultados):
+            tree.insert("", "end", values=(i + 1, f"{x0:.6f}", f"{x1:.6f}", f"{fxm:.6f}", f"{diff_val:.6f}"))
 
-    if(metodo == "Secantes" ):
+    elif metodo == "Secantes":
         columns = ["Iteração", "x0", "x1", "x2", "f(x)", "Diferença"]
         tree = ttk.Treeview(table_frame, columns=columns, show="headings")
         
         for col in columns:
             tree.heading(col, text=col)
+            tree.column(col, width=100, anchor='center')
 
-        for i, (x0, x1, x2, f_val, diff_val) in enumerate(resultados):
-            tree.insert("", "end", values=(i + 1, x0, x1, x2, f_val, diff_val))
+        for i, (x0, x1, xm, fxm, diff_val) in enumerate(resultados):
+            tree.insert("", "end", values=(i + 1, f"{x0:.6f}", f"{x1:.6f}", f"{xm:.6f}", f"{fxm:.6f}", f"{diff_val:.6f}"))
 
     tree.pack(side=tk.LEFT, fill=tk.BOTH)
     scroll = ttk.Scrollbar(table_frame, orient="vertical", command=tree.yview)
     tree.configure(yscroll=scroll.set)
     scroll.pack(side=tk.RIGHT, fill=tk.Y)
+
 
 def executar_bissecao(app):
     func_str = app.entry_func.get()
@@ -189,11 +194,11 @@ def newton(func, xe, eps, rmax):
         if abs(fxn) < eps or iter >= rmax:
             break
         x1 = x0 - fxn / dfxn
-        diff = abs(fxn) - eps
-        resultados.append((x0, x1, fxn, diff))
+        diff = abs(fx(x1)) - eps
+        resultados.append((x0, x1, fx(x1), diff))
         x0 = x1
         iter += 1
-    resultados.append((x0, x1, fx(x0), diff))
+    resultados.append((x0, x1, fx(x1), diff))
     return resultados
 
 def secante(func, x0, x1, eps, rmax):
@@ -210,10 +215,10 @@ def secante(func, x0, x1, eps, rmax):
             break
         xm = x1 - fxb * (x1 - x0) / (fxb - fxa)
         diff = abs(fx(xm)) - eps
-        resultados.append((x0, x1, xm, fxb, diff))
+        resultados.append((x0, x1, xm, fx(xm), diff))
         x0, x1 = x1, xm
         iter += 1
-    resultados.append((x0, x1, xm, fx(x1), diff))
+    resultados.append((x0, x1, xm, fx(xm), diff))
     return resultados
 
 class App(tk.Tk):
